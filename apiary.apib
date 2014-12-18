@@ -1,0 +1,52 @@
+FORMAT: 1A
+
+# player
+Player server API 
+
+# Group API
+The following API is provided for every player
+
+## is alive [/status/]
+### checks that the player is online and ready to play [GET]
++ Response 200 (application/json)
+    + Body    
+        {
+            "revision":"e8912f5b37280dd53412bd307f9056d769fc3b77",
+            "repo": "git@bitbucket.org:omry_nachman/test.git"
+            "uptime": 234523,
+            "_links": {
+                "get-move": { "href": "/get-move/"}
+            }
+        }
+
++ Response 404
++ Response 503 (application/json)
+    + Body
+        { 
+            "errors": [
+                "some erros", 
+                "other error"
+            ]
+        }
+
+## Get move [/get-move/{input}]
++ Parameters
+    + input (required, string, `1`) ... Input for the move
+    
+### Gets a move for input [GET]
++ Response 200 (application/json)
+    + Body
+        { 
+            "stdout": "output",
+            "stderr" : "",
+            "exit-code" 0,
+            "exceptions": "",
+            "duration": 456
+        }
+
++ Response 524
+    + Body
+        {
+            "error": "player execution timeout",
+            "duration": 1001
+        }
