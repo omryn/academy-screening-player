@@ -8,45 +8,67 @@ The following API is provided for every player
 
 ## is alive [/status/]
 ### checks that the player is online and ready to play [GET]
-+ Response 200 (application/json)
-    + Body    
-        {
-            "revision":"e8912f5b37280dd53412bd307f9056d769fc3b77",
-            "repo": "git@bitbucket.org:omry_nachman/test.git",
-            "uptime": 234523,
-            "_links": {
-                "get-move": { "href": "/get-move/"}
++ Response 200
+    + Headers
+
+            x-powered-by: Express
+            content-type: application/json; charset=utf-8
+            content-length: 164
+            etag: W/"a4-8936ce7d"
+            date: Sun, 21 Dec 2014 10:18:57 GMT
+            connection: keep-alive
+
+    + Body
+
+            {
+                "revision":"e8912f5b37280dd53412bd307f9056d769fc3b77",
+                "repo": "git@bitbucket.org:omry_nachman/test.git",
+                "uptime": 234523,
+                "_links": {
+                    "get-move": { "href": "/get-move/"}
+                }
             }
-        }
 
 + Response 404
 + Response 503 (application/json)
     + Body
-        { 
-            "errors": [
-                "some erros", 
-                "other error"
-            ]
-        }
+
+            {
+                "errors": [
+                    "some erros",
+                    "other error"
+                ]
+            }
 
 ## Get move [/get-move/{input}]
 + Parameters
     + input (required, string, `1`) ... Input for the move
     
 ### Gets a move for input [GET]
-+ Response 200 (application/json)
++ Response 200
+    + Headers
+
+            x-powered-by: Express
+            content-type: application/json; charset=utf-8
+            content-length: 76
+            etag: W/"4c-df6f7622"
+            date: Sun, 21 Dec 2014 15:40:10 GMT
+            connection: keep-alive
+
     + Body
-        { 
-            "stdout": "output",
-            "stderr" : "",
-            "exit-code" 0,
-            "exceptions": "",
-            "duration": 456
-        }
+
+            {
+                "stdout": "output",
+                "stderr" : "",
+                "exit-code": 0,
+                "exceptions": "",
+                "duration": 456
+            }
 
 + Response 524
     + Body
-        {
-            "error": "player execution timeout",
-            "duration": 1001
-        }
+
+            {
+                "error": "player execution timeout",
+                "duration": 1001
+            }
