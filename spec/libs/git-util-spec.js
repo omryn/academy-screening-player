@@ -4,8 +4,8 @@
 "use strict";
 var gitUtil = require('../../src/libs/git-util');
 
-describe("suite", function(){
-    it("should fail", function(done){
+describe("gitUtil", function(){
+    it("should execute the file ", function(done){
         expect(false).toBe(true);
         done();
     });

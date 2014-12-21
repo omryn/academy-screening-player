@@ -1,3 +1,5 @@
+"use strict";
+
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -22,7 +24,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/status', function (req, res, next) {
+app.get('/status/?', function (req, res, next) {
   res.json({
     "revision": "e8912f5b37280dd53412bd307f9056d769fc3b77",
     "repo": "git@bitbucket.org:omry_nachman/test.git",
@@ -32,6 +34,17 @@ app.use('/status', function (req, res, next) {
     }
   });
 });
+
+app.get('/get-move/:input/?', function (req, res, next) {
+  res.json({
+    "stdout": "output",
+    "stderr": "",
+    "exit-code": 0,
+    "exceptions": "",
+    "duration": 456
+  });
+});
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -47,9 +60,10 @@ app.use(function (req, res, next) {
 if (app.get('env') === 'development') {
   app.use(function (err, req, res, next) {
     res.status(err.status || 500);
-    res.render('error', {
+    res.json({
       message: err.message,
-      error: err
+      error: err,
+      stack: err.stack
     });
   });
 }
@@ -58,10 +72,7 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use(function (err, req, res, next) {
   res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
+  res.end();
 });
 
 
