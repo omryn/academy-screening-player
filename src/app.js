@@ -21,16 +21,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/status/?', function (req, res, next) {
-  res.json({
-    "revision": "e8912f5b37280dd53412bd307f9056d769fc3b77",
-    "repo": "git@bitbucket.org:omry_nachman/test.git",
-    "uptime": 234523,
-    "_links": {
-      "get-move": {"href": "/get-move/"}
-    }
-  });
-});
+app.get('/status/?', require('./middleware/status'));
 
 app.get('/get-move/:input/?', function (req, res, next) {
   res.json({

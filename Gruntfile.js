@@ -45,8 +45,10 @@ module.exports = function (grunt) {
       }
     },
     watch: {
-      files: ['<%= src.files %>', '<%= spec.files %>'],
-      tasks: ['test']
+      test: {
+        files: ['<%= src.files %>', '<%= spec.files %>'],
+        tasks: ['jshint', 'simpleJasmine', 'test-api']
+      }
     }
   });
 
@@ -60,4 +62,6 @@ module.exports = function (grunt) {
   grunt.registerTask('default', ['test']);
   grunt.registerTask('test', ['jshint', 'simpleJasmine', 'test-api']);
   grunt.registerTask('test-api', ['express:app', 'dredd', 'express:app:stop']);
+  grunt.registerTask('test-unit', ['simpleJasmine']);
+  //grunt.registerTask('watch');
 };

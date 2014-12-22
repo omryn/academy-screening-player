@@ -16,7 +16,7 @@ function spawn(command, args) {
   return new Promise(function (resolve, reject) {
     var spawn = require('child_process').spawn;
     var stdout = '';
-    var cmd = spawn(command, args);
+    var cmd = spawn(command, args, {stdio:'pipe'});
     cmd.stdout.on('data', function (data) {
       stdout = stdout + (''+data).replace(/\n$/gm, '');
     });
@@ -32,5 +32,7 @@ function getLastCommitFromCmd() {
 }
 
 function getRemoteRepoFromCmd() {
-  return spawn('git', ['remote', '-v']);
+  return spawn('git', ['remote', '-v']).then(function (output){
+    return output.match(/(origin)\s*([\w\d\/\-\.:@_]+)\s*\(fetch\)/)[2];
+  });
 }

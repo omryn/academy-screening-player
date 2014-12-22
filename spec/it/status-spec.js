@@ -12,11 +12,15 @@ describe("app integration", function () {
   describe("status", function () {
 
     beforeEach(function (done) {
+      if (server) {
+        server.close();
+      }
       server = app.listen(PORT, function () {
         requestify.get(APP_URL + '/status/').
             then(function (res) {
               response = res;
               server.close(done);
+              server = null;
             });
       });
     });
@@ -30,6 +34,13 @@ describe("app integration", function () {
     it("should include the last commit hash", function (done) {
       getLastCommitFromCmd().then(function (revisionHash) {
         expect(response.getBody().revision).toEqual(revisionHash);
+        done();
+      });
+    });
+
+    it("should include the remote repo origin", function (done) {
+      getRemoteRepoFromCmd().then(function (revisionHash) {
+        expect(response.getBody().repo).toEqual(revisionHash);
         done();
       });
     });

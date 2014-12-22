@@ -8,8 +8,8 @@ var gitUtil = require('../../src/libs/git-util');
 describe("gitUtil", function () {
   describe("#getLastRevision", function () {
     it("should return the lastest git commit hash", function (done) {
-      Promise.all([getLastCommitFromCmd(), gitUtil.getLastRevision()]).
-          spread(function (cmdLastCommitHash, gitUtilLastCommitHash) {
+      Promise.join(getLastCommitFromCmd(), gitUtil.getLastRevision(),
+          function (cmdLastCommitHash, gitUtilLastCommitHash) {
             expect(gitUtilLastCommitHash).toEqual(cmdLastCommitHash);
           }).testDone(done);
     });
