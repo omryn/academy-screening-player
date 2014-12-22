@@ -5,7 +5,7 @@
 var requestify = require('requestify'),
     PORT = 7654, APP_URL = 'http://localhost:' + PORT,
     app = require('../../src/app')(true),
-    response,
+    response, startTime,
     server;
 
 
@@ -25,6 +25,9 @@ function killServer(done) {
 }
 
 function loadServer(done) {
+  startTime = Date.now();
+  app.set('startTime',startTime);
+
   server = app.listen(PORT, function (err) {
     if (err) {
       throw new Error('Unable to load server', err);
@@ -47,7 +50,6 @@ function makeRequest(done) {
 describe("app integration", function () {
   describe("status", function () {
     afterEach(killServer);
-    beforeEach(killServer);
     beforeEach(loadServer);
     beforeEach(makeRequest);
 
@@ -69,6 +71,11 @@ describe("app integration", function () {
         expect(response.getBody().repo).toEqual(remoteOrigin);
         done();
       });
+    });
+
+    it("should include the current uptime", function(){
+       expect(response.getBody().uptime).toBeGreaterThan(0);
+       expect(response.getBody().uptime).toBeLessThan(Date.now() - startTime);
     });
   });
 })

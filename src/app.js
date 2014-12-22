@@ -9,6 +9,7 @@ module.exports = function (silent) {
   var bodyParser = require('body-parser');
 
   var app = express();
+  app.set('startTime',Date.now());
 
   global.Promise = global.Promise || require('bluebird');
 
