@@ -4,9 +4,15 @@
 "use strict";
 var gitUtil = require('../../src/libs/git-util');
 
-describe("gitUtil", function(){
-    it("should execute the file ", function(done){
-        expect(false).toBe(true);
-        done();
+
+describe("gitUtil", function () {
+  describe("#getLastRevision", function () {
+    it("should return the lastest git commit hash", function (done) {
+      Promise.all([getLastCommitFromCmd(), gitUtil.getLastRevision()]).
+          spread(function (cmdLastCommitHash, gitUtilLastCommitHash) {
+            expect(gitUtilLastCommitHash).toEqual(cmdLastCommitHash);
+          }).testDone(done);
     });
+  });
+
 });
