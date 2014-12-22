@@ -18,9 +18,9 @@ function spawn(command, args) {
     var stdout = '';
     var cmd = spawn(command, args, {stdio:'pipe'});
     cmd.stdout.on('data', function (data) {
-      stdout = stdout + (''+data).replace(/\n$/gm, '');
+      stdout = stdout + (''+data).replace(/\n/gm, '');
     });
-    cmd.on('exit', function () {
+    cmd.on('close', function () {
       resolve(stdout);
     }).on('error', reject);
   });

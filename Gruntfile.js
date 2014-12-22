@@ -21,12 +21,26 @@ module.exports = function (grunt) {
           Promise: true,
           copyToGlobal: false,
           fail: false,
-          getLastCommitFromCmd: false
+          getLastCommitFromCmd: false,
+          getRemoteOriginFromCmd: false
         }
       }
     },
     simpleJasmine: {
-      all: {}
+      options: {
+        spec_dir: "test",
+        helpers: ['helpers/**/*.js']
+      },
+      unit: {
+        options: {
+          spec_files: ['!(it)**/*spec.js']
+        }
+      },
+      it: {
+        options: {
+          spec_files: ['it/**/*spec.js']
+        }
+      }
     },
     dredd: {
       options: {
@@ -60,8 +74,9 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-simple-jasmine');
 
   grunt.registerTask('default', ['test']);
-  grunt.registerTask('test', ['jshint', 'simpleJasmine', 'test-api']);
   grunt.registerTask('test-api', ['express:app', 'dredd', 'express:app:stop']);
-  grunt.registerTask('test-unit', ['simpleJasmine']);
+  grunt.registerTask('test-unit', ['simpleJasmine:unit']);
+  grunt.registerTask('test-it', ['simpleJasmine:it']);
+  grunt.registerTask('test', ['jshint', 'simpleJasmine', 'test-api']);
   //grunt.registerTask('watch');
 };

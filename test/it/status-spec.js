@@ -4,26 +4,52 @@
 "use strict";
 var requestify = require('requestify'),
     PORT = 7654, APP_URL = 'http://localhost:' + PORT,
-    app = require('../../src/app'),
+    app = require('../../src/app')(true),
     response,
     server;
 
+
+function killServer(done) {
+  if (server) {
+    server.close(function (err) {
+      if (err) {
+        throw new Error('Unable to kill server', err);
+      } else {
+        server = null;
+        done();
+      }
+    });
+  } else {
+    done();
+  }
+}
+
+function loadServer(done) {
+  server = app.listen(PORT, function (err) {
+    if (err) {
+      throw new Error('Unable to load server', err);
+    }
+    done();
+  });
+}
+
+function makeRequest(done) {
+  requestify.get(APP_URL + '/status/').
+      then(function (res) {
+        if (!res) {
+          throw new Error('Got an empty response from server');
+        }
+        response = res;
+        done();
+      });
+}
+
 describe("app integration", function () {
   describe("status", function () {
-
-    beforeEach(function (done) {
-      if (server) {
-        server.close();
-      }
-      server = app.listen(PORT, function () {
-        requestify.get(APP_URL + '/status/').
-            then(function (res) {
-              response = res;
-              server.close(done);
-              server = null;
-            });
-      });
-    });
+    afterEach(killServer);
+    beforeEach(killServer);
+    beforeEach(loadServer);
+    beforeEach(makeRequest);
 
     it("should return a 200 json response", function () {
       expect(response.getCode()).toBe(200);
@@ -44,7 +70,6 @@ describe("app integration", function () {
         done();
       });
     });
-
-
   });
-});
+})
+;
