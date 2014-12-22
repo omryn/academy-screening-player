@@ -20,8 +20,9 @@ module.exports = function (global) {
         return this.then(function () {
           done();
         }).catch(function (err) {
-          done(err || "Unknown uncaught exception");
-        });
+          fail(err || "Unknown uncaught exception");
+          done();
+        }).done();
       };
 
       /**

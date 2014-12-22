@@ -28,17 +28,36 @@ module.exports = function (grunt) {
     simpleJasmine: {
       all: {}
     },
+    dredd: {
+      options: {
+        server: 'http://localhost:3456',
+        src: './apiary.apib'
+      }
+    },
+    express: {
+      app: {
+        options: {
+          script: './bin/www',
+          debug: false,
+          port: 3456,
+          node_env: 'test-api'
+        }
+      }
+    },
     watch: {
       files: ['<%= src.files %>', '<%= spec.files %>'],
       tasks: ['test']
     }
   });
 
+
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-jasmine');
+  grunt.loadNpmTasks('grunt-express-server');
+  grunt.loadNpmTasks('grunt-dredd');
   grunt.loadNpmTasks('grunt-simple-jasmine');
 
   grunt.registerTask('default', ['test']);
-  grunt.registerTask('test', ['jshint', 'simpleJasmine']);
+  grunt.registerTask('test', ['jshint', 'simpleJasmine', 'test-api']);
+  grunt.registerTask('test-api', ['express:app', 'dredd', 'express:app:stop']);
 };
