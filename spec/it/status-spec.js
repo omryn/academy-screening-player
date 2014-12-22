@@ -39,8 +39,8 @@ describe("app integration", function () {
     });
 
     it("should include the remote repo origin", function (done) {
-      getRemoteRepoFromCmd().then(function (revisionHash) {
-        expect(response.getBody().repo).toEqual(revisionHash);
+      getRemoteOriginFromCmd().then(function (remoteOrigin) {
+        expect(response.getBody().repo).toEqual(remoteOrigin);
         done();
       });
     });

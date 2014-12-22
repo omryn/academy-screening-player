@@ -5,10 +5,10 @@
 var gitUtil = require('../libs/git-util');
 
 module.exports = function (req, res, next) {
-  gitUtil.getLastRevision().then(function (sha) {
+  Promise.join(gitUtil.getLastRevision(), gitUtil.getRemoteOrigin(), function(sha, origin){
     res.json({
       "revision": sha,
-      "repo": "git@bitbucket.org:omry_nachman/test.git",
+      "repo": origin,
       "uptime": 234523,
       "_links": {
         "get-move": {"href": "/get-move/"}

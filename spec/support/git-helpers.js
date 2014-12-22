@@ -7,7 +7,7 @@ module.exports = function(global) {
   return copyToGlobal(global, {
     spawn: spawn,
     getLastCommitFromCmd: getLastCommitFromCmd,
-    getRemoteRepoFromCmd: getRemoteRepoFromCmd
+    getRemoteOriginFromCmd: getRemoteOriginFromCmd
   });
 };
 
@@ -31,7 +31,7 @@ function getLastCommitFromCmd() {
   return spawn('git', ['rev-list', '-1', 'master']);
 }
 
-function getRemoteRepoFromCmd() {
+function getRemoteOriginFromCmd() {
   return spawn('git', ['remote', '-v']).then(function (output){
     return output.match(/(origin)\s*([\w\d\/\-\.:@_]+)\s*\(fetch\)/)[2];
   });

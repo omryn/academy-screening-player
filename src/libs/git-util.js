@@ -4,19 +4,26 @@ var nodegit = require('nodegit'),
     path = require('path');
 
 /**
- * @returns {Promise} a Promise of the last commit's SHA
+ * @returns {Promise} last master commit's SHA
  */
 module.exports.getLastRevision = function getLastRevision() {
   return Repository.open(path.resolve() + '/.git').
       then(function (repo) {
-        repo.getReferences('origin').then(function(remotes){
-          remotes.snapshot().then(function(s){
-            console.log(s);
-          });
-          console.log(remotes);
-        });
         return repo.getMasterCommit();
       }).then(function (firstCommit) {
         return firstCommit.sha();
+      });
+};
+
+/**
+ * @returns {Promise} remote fetch origin
+ */
+module.exports.getRemoteOrigin = function() {
+  return Repository.open(path.resolve() + '/.git').
+      then(function(repo){
+        return nodegit.Remote.load(repo, "origin");
+      }).
+      then(function(origin){
+        return origin.url();
       });
 };
