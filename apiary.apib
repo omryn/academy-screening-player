@@ -6,7 +6,26 @@ Player server API
 # Group API
 The following API is provided for every player
 
-## is alive [/status/]
+## API [/]
++ Response 200
+    + Headers
+
+            x-powered-by: Express
+            content-type: application/json; charset=utf-8
+            date: Sun, 21 Dec 2014 10:18:57 GMT
+            connection: keep-alive
+
+    + Body
+
+            {
+                "_links": [
+                    {"rel": "self", "href":"/"},
+                    {"rel": "status", "href":"/status"},
+                    {"rel": "moves", "href":"/moves"}
+                ]
+            }
+
+## is alive [/status]
 ### checks that the player is online and ready to play [GET]
 + Response 200
     + Headers
@@ -22,12 +41,12 @@ The following API is provided for every player
                 "revision":"e8912f5b37280dd53412bd307f9056d769fc3b77",
                 "repo": "git@bitbucket.org:omry_nachman/test.git",
                 "uptime": 234523,
-                "_links": {
-                    "get-move": { "href": "/get-move/"}
-                }
+                "_links": [
+                    {"rel": "self", "href":"/status"},
+                    {"rel": "moves", "href":"/moves"}
+                ]
             }
 
-+ Response 404
 + Response 503 (application/json)
     + Body
 
@@ -35,37 +54,108 @@ The following API is provided for every player
                 "errors": [
                     "some erros",
                     "other error"
+                ],
+                "_links": [
+                    {"rel": "self", "href":"/status"},
+                    {"rel": "moves", "href":"/moves"}
                 ]
             }
 
-## Get move [/get-move/{input}]
-+ Parameters
-    + input (required, string, `1`) ... Input for the move
-    
-### Gets a move for input [GET]
+## Moves collection [/moves]
+### Create a new move request [POST]
++ Request
+    + Body
+
+            {
+                "input": "some input"
+            }
+
++ Response 201
+    + Body
+
+            {
+                "move-id": "some-id",
+                "player-revision": "e8912f5b37280dd53412bd307f9056d769fc3b77",
+                "repo": "git@bitbucket.org:omry_nachman/test.git",
+                "_links": [
+                    {"rel": "self", "href":"/moves"},
+                    {"rel": "move-status", "href":"/moves/move_id"},
+                    {"rel": "status", "href":"/status"}
+                ]
+            }
+
+### Gets moves [GET]
++ Response 200
+    + Body
+
+            {
+                "player-revision": "e8912f5b37280dd53412bd307f9056d769fc3b77",
+                "repo": "git@bitbucket.org:omry_nachman/test.git",
+                "moves": [
+                    {
+                        "move-id": "some-id",
+                        "status": "running|error|done",
+                        "stdout": "output",
+                        "stderr" : "",
+                        "exit-code": 0,
+                        "exceptions": "",
+                        "crated": "Sun, 21 Dec 2014 15:40:10 GMT",
+                        "duration": 456,
+                        "_links": [
+                            {"rel": "self", "href":"/moves/some-id"},
+                        ]
+                    }
+                ],
+                "_links": [
+                    {"rel": "self", "href":"/moves"},
+                    {"rel": "status", "href":"/status"}
+                ]
+            }
+
+
+### Get move status [GET /moves/{move-id}]
 + Response 200
     + Headers
 
             x-powered-by: Express
             content-type: application/json; charset=utf-8
-            content-length: 76
             date: Sun, 21 Dec 2014 15:40:10 GMT
             connection: keep-alive
 
     + Body
 
             {
+                "move-id": "some-id",
+                "status": "running|error|done",
                 "stdout": "output",
                 "stderr" : "",
                 "exit-code": 0,
                 "exceptions": "",
-                "duration": 456
+                "crated": "Sun, 21 Dec 2014 15:40:10 GMT",
+                "duration": 456,
+                "_links": [
+                    {"rel": "self", "href":"/moves/some-id"},
+                    {"rel": "moves", "href":"/moves"},
+                    {"rel": "status", "href":"/status"}
+                ]
             }
 
-+ Response 524
+### Get move status [DELETE /moves/{move-id}]
++ Response 202
+    + Headers
+
+            x-powered-by: Express
+            content-type: application/json; charset=utf-8
+            date: Sun, 21 Dec 2014 15:40:10 GMT
+            connection: keep-alive
+
     + Body
 
             {
-                "error": "player execution timeout",
-                "duration": 1001
+                "deleted" : "some-id",
+                "_links": [
+                    {"rel": "moves", "href":"/moves"},
+                    {"rel": "status", "href":"/status"}
+                ]
             }
+
