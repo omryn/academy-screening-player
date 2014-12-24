@@ -31,7 +31,7 @@ function copyToGlobal(global, obj) {
  * @param err
  */
 function fail(err){
-  jasmine.getEnv().fail(err);
+  jasmine.getEnv().fail(err.message || err);
 }
 
 /**

@@ -1,12 +1,13 @@
 FORMAT: 1A
 
 # player
-Player server API 
+Player server API
 
 # Group API
 The following API is provided for every player
 
 ## API [/]
+### Index [GET]
 + Response 200
     + Headers
 
@@ -18,15 +19,15 @@ The following API is provided for every player
     + Body
 
             {
-                "_links": [
-                    {"rel": "self", "href":"/"},
-                    {"rel": "status", "href":"/status"},
-                    {"rel": "moves", "href":"/moves"}
-                ]
+                "_links": {
+                    "self": {"href":"/"},
+                    "status": {"href":"/status"},
+                    "moves": {"href":"/moves"}
+                }
             }
 
-## is alive [/status]
-### checks that the player is online and ready to play [GET]
+## Status [/status]
+### Checks that the player is online and ready to play [GET]
 + Response 200
     + Headers
 
@@ -41,10 +42,11 @@ The following API is provided for every player
                 "revision":"e8912f5b37280dd53412bd307f9056d769fc3b77",
                 "repo": "git@bitbucket.org:omry_nachman/test.git",
                 "uptime": 234523,
-                "_links": [
-                    {"rel": "self", "href":"/status"},
-                    {"rel": "moves", "href":"/moves"}
-                ]
+                "_links": {
+                    "self": {"href":"/status"},
+                    "moves": {"href":"/moves"},
+                    "status": {"href":"/status"}
+                }
             }
 
 + Response 503 (application/json)
@@ -55,10 +57,10 @@ The following API is provided for every player
                     "some erros",
                     "other error"
                 ],
-                "_links": [
-                    {"rel": "self", "href":"/status"},
-                    {"rel": "moves", "href":"/moves"}
-                ]
+                "_links": {
+                    "self": {"href":"/status"},
+                    "moves": {"href":"/moves"}
+                }
             }
 
 ## Moves collection [/moves]
@@ -77,15 +79,15 @@ The following API is provided for every player
                 "move-id": "some-id",
                 "player-revision": "e8912f5b37280dd53412bd307f9056d769fc3b77",
                 "repo": "git@bitbucket.org:omry_nachman/test.git",
-                "_links": [
-                    {"rel": "self", "href":"/moves"},
-                    {"rel": "move-status", "href":"/moves/move_id"},
-                    {"rel": "status", "href":"/status"}
-                ]
+                "_links": {
+                    "self": {"href":"/moves"},
+                    "move-status": {"href":"/moves/move_id"},
+                    "status": {"href":"/status"}
+                }
             }
 
 ### Gets moves [GET]
-+ Response 200
++ Response 200 (application/json; charset=utf-8)
     + Body
 
             {
@@ -101,15 +103,16 @@ The following API is provided for every player
                         "exceptions": "",
                         "crated": "Sun, 21 Dec 2014 15:40:10 GMT",
                         "duration": 456,
-                        "_links": [
-                            {"rel": "self", "href":"/moves/some-id"},
-                        ]
+                        "_links": {
+                            "self": {"href":"/moves/some-id"}
+                        }
                     }
                 ],
-                "_links": [
-                    {"rel": "self", "href":"/moves"},
-                    {"rel": "status", "href":"/status"}
-                ]
+                "_links": {
+                    "self": {"href":"/moves"},
+                    "status": {"href":"/status"},
+                    "moves": {"href": "/moves"}
+                }
             }
 
 
@@ -133,11 +136,11 @@ The following API is provided for every player
                 "exceptions": "",
                 "crated": "Sun, 21 Dec 2014 15:40:10 GMT",
                 "duration": 456,
-                "_links": [
-                    {"rel": "self", "href":"/moves/some-id"},
-                    {"rel": "moves", "href":"/moves"},
-                    {"rel": "status", "href":"/status"}
-                ]
+                "_links": {
+                    "self": {"href":"/moves/some-id"},
+                    "moves": {"href":"/moves"},
+                    "status": {"href":"/status"}
+                }
             }
 
 ### Get move status [DELETE /moves/{move-id}]
@@ -153,9 +156,9 @@ The following API is provided for every player
 
             {
                 "deleted" : "some-id",
-                "_links": [
-                    {"rel": "moves", "href":"/moves"},
-                    {"rel": "status", "href":"/status"}
-                ]
+                "_links": {
+                    "moves": {"href":"/moves"},
+                    "status": {"href":"/status"}
+                }
             }
 

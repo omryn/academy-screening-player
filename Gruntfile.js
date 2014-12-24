@@ -8,7 +8,7 @@ module.exports = function (grunt) {
       files: ['Gruntfile.js', 'src/**/*.js']
     },
     spec: {
-      files: ['spec/**/*.js']
+      files: ['test/**/*.js']
     },
     jshint: {
       files: ['<%= src.files %>', '<%= spec.files %>'],
@@ -17,12 +17,14 @@ module.exports = function (grunt) {
         jasmine: true,
         node: true,
         globals: {
+          _: false,
           jasmine: false,
           Promise: true,
           copyToGlobal: false,
           fail: false,
           getLastCommitFromCmd: false,
-          getRemoteOriginFromCmd: false
+          getRemoteOriginFromCmd: false,
+          fit: false, fdescribe: false
         }
       }
     },

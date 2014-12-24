@@ -8,32 +8,36 @@ module.exports = function (silent) {
   var cookieParser = require('cookie-parser');
   var bodyParser = require('body-parser');
 
+  var Routes = require('./libs/routes');
+  var json = require('./middleware/json-response');
+
   var app = express();
   app.set('startTime',Date.now());
 
   global.Promise = global.Promise || require('bluebird');
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(__dirname + '/public/favicon.ico'));
   if (!silent) {
     app.use(logger('dev'));
   }
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({extended: false}));
   app.use(cookieParser());
-  app.use(express.static(path.join(__dirname, 'public')));
 
-  app.get('/status/?', require('./middleware/status'));
+  new Routes({
+    get: json({}),
+    status: {
+      get: require('./middleware/status')
+    },
+    moves: {
+      get: json({}),
+      post: json({}),
+      ':move-id': {
+        get: json({}),
+        delete: json({})
+      }
+    }
+  }).wire(app);
 
-  app.get('/get-move/:input/?', function (req, res, next) {
-    res.json({
-      "stdout": "output",
-      "stderr": "",
-      "exit-code": 0,
-      "exceptions": "",
-      "duration": 456
-    });
-  });
 
 
 // catch 404 and forward to error handler

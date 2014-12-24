@@ -75,7 +75,7 @@ describe("app integration", function () {
 
     it("should include the current uptime", function(){
        expect(response.getBody().uptime).toBeGreaterThan(0);
-       expect(response.getBody().uptime).toBeLessThan(Date.now() - startTime);
+       expect(response.getBody().uptime).toBeLessThan(1+Date.now() - startTime);
     });
   });
 })
