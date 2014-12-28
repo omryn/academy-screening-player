@@ -1,0 +1,3 @@
+player:
+  cmd:
+    test/files/noop

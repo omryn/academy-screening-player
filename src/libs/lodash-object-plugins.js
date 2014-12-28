@@ -4,7 +4,7 @@
 "use strict";
 
 global._ = require('lodash');
-_.mixin({
+var added = {
   /**
    * @lent _
    * @param {Object} object and object to traverse
@@ -12,16 +12,30 @@ _.mixin({
    * @param {Array} [keys=[]] added prefix keys
    */
   traverse: function traverse(object, callback, keys) {
+    traverse.STOP = "STOP";
+    traverse.SKIP_CHILDREN = "SKIP_CHILDREN";
     keys = keys || [];
-    callback(object, keys);
+    var finished = callback(object, keys);
+
+    switch (finished) {
+      case traverse.STOP:
+        return traverse.STOP;
+      case traverse.SKIP_CHILDREN:
+        return;
+    }
+
     _.forEach(object, function (val, key) {
-      var withCurrentKey = _.flatten([keys, key]);
-      if(_.isString(val)) {
-        callback(val, withCurrentKey);
-      } else {
-        traverse(val, callback, withCurrentKey);
+      if (finished !== traverse.STOP) {
+        var withCurrentKey = _.flatten([keys, key]);
+        if (_.isString(val)) {
+          callback(val, withCurrentKey);
+        } else {
+          finished = traverse(val, callback, withCurrentKey);
+        }
       }
     });
+
+    return finished;
   },
   /**
    * @lent _
@@ -52,7 +66,7 @@ _.mixin({
    * @param {Array|String} keys if a string is provided, it will be converted using split('.')
    * @returns {*}
    */
-  getValue: function getValue(object, keys) {
+  getValue: function getValue(object, keys, defaultValue) {
     if (_.isObject(object)) {
       if (!_.isArray(keys)) {
         keys = _.compact(keys.split('.'));
@@ -62,13 +76,33 @@ _.mixin({
           object = object[key];
           return true;
         } else {
-          object = undefined;
+          object = defaultValue;
         }
       });
     }
 
-    return object;
+    return object === undefined ? defaultValue : object;
+  },
+
+  /**
+   *
+   * @param {Object} object
+   * @param {Object} defaults
+   * @returns {Object} A deep union of object and defaults where fields of objects are preferred
+   */
+  defaultsDeep: function defaultsDeep(object, defaults) {
+    var res = _.cloneDeep(defaults);
+    object = object || {};
+    added.traverse(object, function (val, keys) {
+      if (!_.isPlainObject(val)) {
+        _.setValue(res, keys, val);
+      }
+    });
+    return res;
   }
-});
+};
+
+_.mixin(added);
+
 
 module.exports = _;

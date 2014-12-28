@@ -5,14 +5,14 @@
 var gitUtil = require('../libs/git-util');
 
 module.exports = function (req, res, next) {
-  Promise.join(gitUtil.getLastRevision(), gitUtil.getRemoteOrigin(), function(sha, origin){
+  gitUtil.getRepoDetails().then(function (status) {
     var uptime = Date.now() - req.app.get('startTime');
-    res.json({
-      "revision": sha,
-      "repo": origin,
-      "uptime": uptime,
-      "_links": {
-        "get-move": {"href": "/get-move/"}
-      }});
+    status.uptime = uptime;
+    status._links = {
+      "get-move": {"href": "/get-move/"}
+    };
+    res.json(status);
+  }).catch(function(err){
+    next(err);
   });
 };

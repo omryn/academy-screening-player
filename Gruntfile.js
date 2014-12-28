@@ -24,8 +24,15 @@ module.exports = function (grunt) {
           fail: false,
           getLastCommitFromCmd: false,
           getRemoteOriginFromCmd: false,
-          fit: false, fdescribe: false
+          fit: false, fdescribe: false,
+          helper: false,
+          getCurrentStack: false
         }
+      }
+    },
+    env: {
+      testIt: {
+        NODE_ENV: 'test-it'
       }
     },
     simpleJasmine: {

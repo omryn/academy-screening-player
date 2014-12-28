@@ -71,4 +71,25 @@ describe("lodash-object-plugins", function () {
       expect(_.getValue(object, 'a.some.wrong.path')).not.toBeDefined();
     });
   });
+
+  describe("_.defaultsDeep", function () {
+    it("should return a union object", function () {
+      expect(_.defaultsDeep({a: {b: {c: 1}}}, {a: {b: {d: 2}}})).toEqual({
+        a: {
+          b: {
+            c: 1, d: 2
+          }
+        }
+      });
+    });
+    it('should prefer object over default', function(){
+      expect(_.defaultsDeep({a: {b: {c: 1}}}, {a: {b: {c: 2}}})).toEqual({
+        a: {
+          b: {
+            c: 1
+          }
+        }
+      });
+    });
+  });
 });

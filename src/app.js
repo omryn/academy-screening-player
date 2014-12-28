@@ -8,6 +8,9 @@ module.exports = function (silent) {
   var cookieParser = require('cookie-parser');
   var bodyParser = require('body-parser');
 
+  var model = require('./model/model')('MOVES'),
+      moves = require('./middleware/moves')(model);
+
   var Routes = require('./libs/routes');
   var json = require('./middleware/json-response');
 
@@ -29,10 +32,10 @@ module.exports = function (silent) {
       get: require('./middleware/status')
     },
     moves: {
-      get: json({}),
-      post: json({}),
-      ':move-id': {
-        get: json({}),
+      get: moves.list,
+      post: moves.create,
+      ':move_id': {
+        get: moves.getDetails,
         delete: json({})
       }
     }

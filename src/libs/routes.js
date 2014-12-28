@@ -16,7 +16,7 @@ function Routes(nouns) {
 }
 
 Routes.prototype.addRoute = function (routes) {
-  var newRoutes = combineMaps(this._routes, routes);
+  var newRoutes = _.defaultsDeep(routes, this._routes);
   return new Routes(newRoutes);
 };
 
@@ -39,10 +39,15 @@ Routes.prototype.getRoutingMap = function () {
 
 Routes.prototype.getLinks = function (req) {
   var links = {"self": {href: req.originalUrl}},
-      prefix = '';
+      prefix = '', count = 0;
 
   function addValidLinks(val, keys) {
-    if (_.isPlainObject(val) && _.every(keys, isNotVariable) && keys.length) {
+    count++;
+
+    if (_.some(keys, isPathParameter)) {
+      return _.traverse.SKIP_CHILDREN;
+    }
+    if (_.isPlainObject(val) && keys.length) {
       links[keys.join(':')] = {href: prefix + '/' + keys.join('/')};
     }
   }
@@ -62,6 +67,7 @@ function addLinksToJson(self) {
     var original = res.json;
     res.json = function (json) {
       var args = _.rest(arguments);
+      json = _.cloneDeep(json);
       json._links = _.defaults(self.getLinks(req), json._links);
       args.unshift(json);
       return original.apply(res, args);
@@ -83,23 +89,12 @@ function flatten(obj) {
   return ret;
 }
 
-
-function combineMaps(oldRoutes, newRoutes) {
-  var res = _.defaults(oldRoutes);
-  _.traverse(newRoutes, function (val, keys) {
-    if (!_.isPlainObject(val)) {
-      _.setValue(res, keys, val);
-    }
-  });
-  return res;
-}
-
 function parsePath(route) {
   return route + '/?';
 }
 
-function isNotVariable(key) {
-  return /^\w/.test(key);
+function isPathParameter(key) {
+  return /^:/.test(key);
 }
 
 function isVerb(keys) {

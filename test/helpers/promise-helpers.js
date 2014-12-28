@@ -8,6 +8,14 @@ module.exports = function (global) {
     global.Promise = require('bluebird');
   }
 
+  Promise.onPossiblyUnhandledRejection(function(error){
+    //console.error(error);
+  });
+
+  Error.stackTraceLimit = 25;
+  Promise.longStackTraces();
+
+
   beforeEach(function () {
     try {
       /**
@@ -29,9 +37,10 @@ module.exports = function (global) {
        * @lent Promise
        * @returns {Promise}
        */
-      Promise.prototype.expectReject = function (expectReasonToContain) {
+      Promise.prototype.expectReject = function (done, expectReasonToContain) {
         return this.then(function (value) {
-          jasmine.getEnv().currentSpec.fail('Expect promise to be resolved, but it was rejected with:\n\t\t' + value);
+          fail('Expect promise to be rejected, but it was resolved with:\n\t\t' + value);
+          done();
         }).catch(function (err) {
           if (expectReasonToContain) {
             if (err && err.message) {
@@ -46,11 +55,17 @@ module.exports = function (global) {
 
       /**
        * @lent Promise
+       * @param{Function} done called if rejected
+       * @param{*?} expectValueToContain
        * @returns {Promise}
        */
-      Promise.prototype.expectResolve = function (expectValueToContain) {
+      Promise.prototype.expectResolve = function (done, expectValueToContain) {
+        var trace = getCurrentStack();
+
         return this.catch(function (err) {
-          jasmine.getEnv().currentSpec.fail('Expect promise to be resolved, but it was rejected with:\n\t\t' + err);
+          fail('Expect promise to be resolved, but it was rejected with:\n\t\t' + _.getValue(err,'message', err) + '\n' + trace);
+          done();
+          return Promise.reject(err);
         }).then(function (value) {
           if (expectValueToContain !== undefined) {
             expect(value).toContain(expectValueToContain);

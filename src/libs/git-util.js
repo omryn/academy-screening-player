@@ -18,12 +18,26 @@ module.exports.getLastRevision = function getLastRevision() {
 /**
  * @returns {Promise} remote fetch origin
  */
-module.exports.getRemoteOrigin = function() {
+module.exports.getRemoteOrigin = function () {
   return Repository.open(path.resolve() + '/.git').
-      then(function(repo){
+      then(function (repo) {
         return nodegit.Remote.load(repo, "origin");
       }).
-      then(function(origin){
+      then(function (origin) {
         return origin.url();
+      });
+};
+
+/**
+ *
+ * @returns {Object} an obejct containing {repo:.., revision:...}
+ */
+module.exports.getRepoDetails = function () {
+  return Promise.all([module.exports.getRemoteOrigin(), module.exports.getLastRevision()]).
+      spread(function (origin, sha) {
+        return {
+          "revision": sha,
+          "repo": origin
+        };
       });
 };

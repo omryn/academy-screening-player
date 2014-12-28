@@ -66,6 +66,9 @@ The following API is provided for every player
 ## Moves collection [/moves]
 ### Create a new move request [POST]
 + Request
+    + Headers
+
+            content-type: application/json
     + Body
 
             {
@@ -76,38 +79,38 @@ The following API is provided for every player
     + Body
 
             {
-                "move-id": "some-id",
-                "player-revision": "e8912f5b37280dd53412bd307f9056d769fc3b77",
-                "repo": "git@bitbucket.org:omry_nachman/test.git",
+                "move_id": "some-id",
                 "_links": {
                     "self": {"href":"/moves"},
-                    "move-status": {"href":"/moves/move_id"},
-                    "status": {"href":"/status"}
+                    "move_status": {"href":"/moves/move_id"},
+                    "status": {"href":"/status"},
+                    "moves": {"href": "/moves"}
                 }
             }
 
 ### Gets moves [GET]
 + Response 200 (application/json; charset=utf-8)
+    + Headers
+
+                x-powered-by: Express
+                content-type: application/json; charset=utf-8
+                date: Sun, 21 Dec 2014 15:40:10 GMT
+                connection: keep-alive
     + Body
 
             {
-                "player-revision": "e8912f5b37280dd53412bd307f9056d769fc3b77",
+                "revision":"e8912f5b37280dd53412bd307f9056d769fc3b77",
                 "repo": "git@bitbucket.org:omry_nachman/test.git",
-                "moves": [
-                    {
-                        "move-id": "some-id",
-                        "status": "running|error|done",
-                        "stdout": "output",
-                        "stderr" : "",
-                        "exit-code": 0,
-                        "exceptions": "",
-                        "crated": "Sun, 21 Dec 2014 15:40:10 GMT",
-                        "duration": 456,
-                        "_links": {
-                            "self": {"href":"/moves/some-id"}
-                        }
-                    }
-                ],
+                "_embedded": {
+                    "moves": [
+                            {
+                                "move_id": "some_id",
+                                "_links": {
+                                    "move_status": {"href": "http://..."}
+                                }
+                            }
+                    ]
+                },
                 "_links": {
                     "self": {"href":"/moves"},
                     "status": {"href":"/status"},
@@ -116,7 +119,7 @@ The following API is provided for every player
             }
 
 
-### Get move status [GET /moves/{move-id}]
+### Get move status [GET /moves/{move_id}]
 + Response 200
     + Headers
 
@@ -128,13 +131,13 @@ The following API is provided for every player
     + Body
 
             {
-                "move-id": "some-id",
-                "status": "running|error|done",
+                "move_id": "some-id",
+                "status": "pending|running|error|done",
                 "stdout": "output",
                 "stderr" : "",
-                "exit-code": 0,
+                "exit_code": 0,
                 "exceptions": "",
-                "crated": "Sun, 21 Dec 2014 15:40:10 GMT",
+                "created": "Sun, 21 Dec 2014 15:40:10 GMT",
                 "duration": 456,
                 "_links": {
                     "self": {"href":"/moves/some-id"},
@@ -143,7 +146,7 @@ The following API is provided for every player
                 }
             }
 
-### Get move status [DELETE /moves/{move-id}]
+### Get move status [DELETE /moves/{move_id}]
 + Response 202
     + Headers
 
