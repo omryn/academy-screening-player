@@ -1,2 +1,3 @@
-Player
-  port: 3000
+player:
+  cmd:
+    test/files/echo-with-delay
